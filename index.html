@@ -48,8 +48,8 @@
         marker.moveTo(point.x, point.y);
         marker.lineTo(point.x, point.y);
         oldPoint = oldMidPoint = point;
-        graphics.on("mousemove", handleMove);
-        graphics.on("mouseup", handleUp);
+        graphics.on("pointermove", handleMove);
+        graphics.on("pointerup", handleUp);
         app.render();
       }
 
@@ -70,8 +70,8 @@
       function handleUp(event) {
         var point = new PIXI.Point(event.data.global.x, event.data.global.y);
         marker.endFill();
-        graphics.off("mousemove", handleMove);
-        graphics.off("mouseup", handleUp);
+        graphics.off("pointermove", handleMove);
+        graphics.off("pointerup", handleUp);
         app.render();
       }
       function onRefresh() {
@@ -81,7 +81,7 @@
       graphics.drawRect(0, 0, vw(), vh() - 100);
       graphics.endFill();
       graphics.interactive = true;
-      graphics.on("mousedown", handleDown);
+      graphics.on("pointerdown", handleDown);
       app.stage.addChild(graphics);
       app.stage.addChild(marker);
     </script>
