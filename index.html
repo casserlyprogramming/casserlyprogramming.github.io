@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Eli's Pad</title>
+    <style>
+      .button {
+        background-color: green;
+        color: white;
+        border-radius: 50px;
+        border: 1px solid purple;
+        width: 100%;
+        height: 50px;
+      }
+    </style>
+  </head>
+  <script src="pixi.min.js"></script>
+  <body>
+    <script type="text/javascript">
+      function vw() {
+        return Math.max(
+          document.documentElement.clientWidth || 0,
+          window.innerWidth || 0
+        );
+      }
+      function vh() {
+        return Math.max(
+          document.documentElement.clientHeight || 0,
+          window.innerHeight || 0
+        );
+      }
+      let app = new PIXI.Application({
+        backgroundColor: 0xdcdcdc,
+        width: vw(),
+        height: vh() - 100,
+      });
+      document.body.appendChild(app.view);
+
+      var size = 10;
+      var graphics = new PIXI.Graphics();
+      var marker = new PIXI.Graphics();
+      var oldPoint, oldMidPoint;
+
+      function handleDown(event) {
+        var point = new PIXI.Point(event.data.global.x, event.data.global.y);
+        marker.beginFill(0x00ff00);
+        marker.lineStyle(2, 0x00ff00, 1);
+        marker.moveTo(point.x, point.y);
+        marker.lineTo(point.x, point.y);
+        oldPoint = oldMidPoint = point;
+        graphics.on("mousemove", handleMove);
+        graphics.on("mouseup", handleUp);
+        app.render();
+      }
+
+      function handleMove(event) {
+        var point = new PIXI.Point(event.data.global.x, event.data.global.y);
+        var midPoint = new PIXI.Point(
+          (oldPoint.x + point.x) >> 1,
+          (oldPoint.y + point.y) >> 1
+        );
+        marker.moveTo(midPoint.x, midPoint.y);
+        //marker.quadraticCurveTo(oldPoint.x, oldPoint.y, oldMidPoint.x, oldMidPoint.y);
+        marker.drawCircle(midPoint.x, midPoint.y, size);
+        oldMidPoint = midPoint;
+        oldPoint = point;
+        app.render();
+      }
+
+      function handleUp(event) {
+        var point = new PIXI.Point(event.data.global.x, event.data.global.y);
+        marker.endFill();
+        graphics.off("mousemove", handleMove);
+        graphics.off("mouseup", handleUp);
+        app.render();
+      }
+      function onRefresh() {
+        marker.clear();
+      }
+      graphics.beginFill("transparent");
+      graphics.drawRect(0, 0, vw(), vh() - 100);
+      graphics.endFill();
+      graphics.interactive = true;
+      graphics.on("mousedown", handleDown);
+      app.stage.addChild(graphics);
+      app.stage.addChild(marker);
+    </script>
+    <button class="button" onclick="onRefresh()">Refresh</button>
+  </body>
+</html>
